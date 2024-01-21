@@ -66,57 +66,67 @@ public:
     void saveToFile(const std::string &filename)
     {
         std::ofstream file(filename, std::ios::binary);
-
-        if (file.is_open())
-        {
-            for (const auto &type : vehicles)
-            {
-                for (const auto &vehicle : type.second)
-                {
-                    file.write(reinterpret_cast<const char *>(vehicle.get()), sizeof(Vehicle));
-                }
-            }
-
-            file.close();
-            std::cout << "Database saved to file: " << filename << std::endl;
-        }
-        else
+        if (!file.is_open())
         {
             std::cerr << "Error opening file for writing: " << filename << std::endl;
+            return;
         }
+
+        for (const auto &type : vehicles)
+        {
+            for (const auto &vehicle : type.second)
+            {
+                std::string type = vehicle->getType();
+                size_t length = type.length();
+                file.write(reinterpret_cast<const char *>(&length), sizeof(length));
+                file.write(type.c_str(), length);
+                vehicle->serialize(file);
+            }
+        }
+
+        file.close();
+        std::cout << "Database saved to file: " << filename << std::endl;
     }
 
     void readFromFile(const std::string &filename)
     {
         std::ifstream file(filename, std::ios::binary);
+        if (!file.is_open())
+        {
+            std::cerr << "Error opening file for reading: " << filename << std::endl;
+            return;
+        }
 
         vehicles.clear();
 
-        if (file.is_open())
+        while (file.peek() != EOF)
         {
-            while (!file.eof())
+            size_t length;
+            file.read(reinterpret_cast<char *>(&length), sizeof(length));
+
+            std::string vehicle_type(length, '\0');
+            file.read(&vehicle_type[0], length);
+
+            std::unique_ptr<Vehicle> vehicle;
+            if (vehicle_type == "Car")
             {
-                std::unique_ptr<Vehicle> vehicle = std::make_unique<Vehicle>("", "");
-
-                file.read(reinterpret_cast<char *>(vehicle.get()), sizeof(Vehicle));
-
-                if (dynamic_cast<Car *>(vehicle.get()))
-                {
-                    addVehicle(std::move(vehicle));
-                }
-                else if (dynamic_cast<Motorcycle *>(vehicle.get()))
-                {
-                    addVehicle(std::move(vehicle));
-                }
+                vehicle = std::make_unique<Car>("", "");
+            }
+            else if (vehicle_type == "Motorcycle")
+            {
+                vehicle = std::make_unique<Motorcycle>("", "");
+            }
+            else
+            {
+                continue;
             }
 
-            file.close();
-            std::cout << "Database loaded from file: " << filename << std::endl;
+            vehicle->deserialize(file);
+            addVehicle(std::move(vehicle));
         }
-        else
-        {
-            std::cerr << "Error opening file for reading: " << filename << std::endl;
-        }
+
+        file.close();
+        std::cout << "Database loaded from file: " << filename << std::endl;
     }
 };
 
