@@ -25,9 +25,9 @@ int main()
         std::cout << "6. Load from file\n";
         std::cout << "0. Exit\n";
         std::cout << "Enter your choice: ";
-        
 
-        while (!(std::cin >> choice)) {
+        while (!(std::cin >> choice))
+        {
             std::cin.clear();
             std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
             std::cout << "Invalid choice. Please enter a number.\n";

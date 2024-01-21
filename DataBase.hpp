@@ -63,29 +63,6 @@ public:
         }
     }
 
-    // void saveToFile(const std::string &filename)
-    // {
-    //     std::ofstream file(filename, std::ios::binary);
-    //     if (!file.is_open())
-    //     {
-    //         std::cerr << "Error opening file for writing: " << filename << std::endl;
-    //         return;
-    //     }
-
-    //     for (const auto &type : vehicles)
-    //     {
-    //         for (const auto &vehicle : type.second)
-    //         {
-    //             std::string type = vehicle->getType();
-    //             file.write(type.c_str(), type.size());
-    //             vehicle->serialize(file);
-    //         }
-    //     }
-
-    //     file.close();
-    //     std::cout << "Database saved to file: " << filename << std::endl;
-    // }
-
     void saveToFile(const std::string &filename)
     {
         std::ofstream file(filename, std::ios::binary);
@@ -101,8 +78,8 @@ public:
             {
                 std::string type = vehicle->getType();
                 size_t length = type.length();
-                file.write(reinterpret_cast<const char *>(&length), sizeof(length)); // Write the length of the type string
-                file.write(type.c_str(), length);                                    // Write the type string
+                file.write(reinterpret_cast<const char *>(&length), sizeof(length));
+                file.write(type.c_str(), length);
                 vehicle->serialize(file);
             }
         }
@@ -110,48 +87,6 @@ public:
         file.close();
         std::cout << "Database saved to file: " << filename << std::endl;
     }
-
-    // void readFromFile(const std::string &filename)
-    // {
-    //     std::ifstream file(filename, std::ios::binary);
-    //     if (!file.is_open())
-    //     {
-    //         std::cerr << "Error opening file for reading: " << filename << std::endl;
-    //         return;
-    //     }
-
-    //     vehicles.clear();
-
-    //     while (!file.eof())
-    //     {
-    //         char type[20];
-    //         file.read(type, sizeof(type));
-    //         std::string vehicleType(type);
-    //         vehicleType.erase(vehicleType.size() - 1);
-
-    //         // POZMIENIAC PISOWNIE
-
-    //         std::unique_ptr<Vehicle> vehicle;
-    //         if (vehicleType == "Car")
-    //         {
-    //             vehicle = std::make_unique<Car>("", "");
-    //         }
-    //         else if (vehicleType == "Motorcycle")
-    //         {
-    //             vehicle = std::make_unique<Motorcycle>("", "");
-    //         }
-    //         else
-    //         {
-    //             break;
-    //         }
-
-    //         vehicle->deserialize(file);
-    //         addVehicle(std::move(vehicle));
-    //     }
-
-    //     file.close();
-    //     std::cout << "Database loaded from file: " << filename << std::endl;
-    // }
 
     void readFromFile(const std::string &filename)
     {
@@ -167,10 +102,10 @@ public:
         while (file.peek() != EOF)
         {
             size_t length;
-            file.read(reinterpret_cast<char *>(&length), sizeof(length)); // Read the length of the type string
+            file.read(reinterpret_cast<char *>(&length), sizeof(length));
 
-            std::string vehicleType(length, '\0'); // Create a string of the correct length
-            file.read(&vehicleType[0], length);    // Read the type string
+            std::string vehicleType(length, '\0');
+            file.read(&vehicleType[0], length);
 
             std::unique_ptr<Vehicle> vehicle;
             if (vehicleType == "Car")
@@ -183,7 +118,7 @@ public:
             }
             else
             {
-                continue; // Skip unknown type
+                continue;
             }
 
             vehicle->deserialize(file);
