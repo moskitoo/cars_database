@@ -104,15 +104,15 @@ public:
             size_t length;
             file.read(reinterpret_cast<char *>(&length), sizeof(length));
 
-            std::string vehicleType(length, '\0');
-            file.read(&vehicleType[0], length);
+            std::string vehicle_type(length, '\0');
+            file.read(&vehicle_type[0], length);
 
             std::unique_ptr<Vehicle> vehicle;
-            if (vehicleType == "Car")
+            if (vehicle_type == "Car")
             {
                 vehicle = std::make_unique<Car>("", "");
             }
-            else if (vehicleType == "Motorcycle")
+            else if (vehicle_type == "Motorcycle")
             {
                 vehicle = std::make_unique<Motorcycle>("", "");
             }
