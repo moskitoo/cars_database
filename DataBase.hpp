@@ -3,7 +3,6 @@
 
 #include "Vehicles.hpp"
 
-#include <variant>
 #include <iostream>
 #include <vector>
 #include <fstream>
@@ -13,7 +12,6 @@
 class Database
 {
 private:
-    // std::vector<Vehicle*> vehicles;
     std::map<std::string, std::vector<std::unique_ptr<Vehicle>>> vehicles;
 
 public:
@@ -54,9 +52,13 @@ public:
                       << type.first << ":\n"
                       << std::endl;
 
+            int iterator = 0;
+
             for (const auto &vehicle : type.second)
             {
+                std::cout << iterator << ": ";
                 vehicle->display();
+                iterator++;
             }
         }
     }
@@ -88,11 +90,14 @@ public:
     {
         std::ifstream file(filename, std::ios::binary);
 
+        vehicles.clear();
+
         if (file.is_open())
         {
             while (!file.eof())
             {
                 std::unique_ptr<Vehicle> vehicle = std::make_unique<Vehicle>("", "");
+
                 file.read(reinterpret_cast<char *>(vehicle.get()), sizeof(Vehicle));
 
                 if (dynamic_cast<Car *>(vehicle.get()))

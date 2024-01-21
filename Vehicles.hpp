@@ -12,44 +12,40 @@ private:
 
 public:
     Vehicle(const std::string &b, const std::string &mdl) : brand(b), model(mdl) {}
+    virtual ~Vehicle() {}
 
     virtual void display() const
     {
-        std::cout << "Brand: " << brand << ", Model: " << model << std::endl;
+        std::cout << "Brand: " << brand << ", Model: " << model << ", ";
     }
 
-    virtual ~Vehicle() {}
 };
 
 class Car : public Vehicle
 {
-    // private:
-    //     int numberOfDoors;
 
 public:
     Car(const std::string &b, const std::string &mdl)
         : Vehicle(b, mdl) {}
 
-    // void display() const override
-    // {
-    //     Vehicle::display();
-    //     std::cout << "Number of doors: " << numberOfDoors << std::endl;
-    // }
+    void display() const
+    {
+        Vehicle::display();
+        std::cout << "Recquired age: 18" << std::endl;
+    }
 };
 
 class Motorcycle : public Vehicle
 {
-    // private:
-    //     int engineCapacity;
 
 public:
     Motorcycle(const std::string &b, const std::string &mdl)
         : Vehicle(b, mdl) {}
 
-    // void display() const override
-    // {
-    //     Vehicle::display();
-    //     std::cout << "Engine capacity: " << engineCapacity << "ccm" << std::endl;
-    // }
+    void display() const // override
+    {
+        Vehicle::display();
+        std::cout << "Recquired age: 24" << std::endl;
+    }
 };
 #endif // VEHICLES

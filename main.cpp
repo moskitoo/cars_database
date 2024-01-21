@@ -1,5 +1,7 @@
 #include "DataBase.hpp"
 #include <iostream>
+#include <string>
+#include <limits>
 
 int main()
 {
@@ -11,6 +13,7 @@ int main()
     // db.addVehicle(std::make_unique<Motorcycle>("Honda", "CBR"));
 
     int choice;
+
     do
     {
         std::cout << "\nMenu:\n";
@@ -22,7 +25,14 @@ int main()
         std::cout << "6. Load from file\n";
         std::cout << "0. Exit\n";
         std::cout << "Enter your choice: ";
-        std::cin >> choice;
+        
+
+        while (!(std::cin >> choice)) {
+            std::cin.clear();
+            std::cin.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+            std::cout << "Invalid choice. Please enter a number.\n";
+            std::cout << "Enter your choice: ";
+        }
 
         switch (choice)
         {
@@ -55,11 +65,9 @@ int main()
             break;
         case 5:
             db.saveToFile("database.bin");
-            std::cout << "Database saved to file.\n";
             break;
         case 6:
             db.readFromFile("database.bin");
-            std::cout << "Database loaded from file.\n";
             break;
         case 0:
             std::cout << "Exiting...\n";
